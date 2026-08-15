@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,12 @@ public class Jugador : MonoBehaviour
     Vector3 rotacion;
     Animator animator;
     int saltos_restantes;
+    float is_grounded;
+
+    //Estados
+
+    float contadorDash;
+    float cooldowDash;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,14 +28,48 @@ public class Jugador : MonoBehaviour
 
         //Application.targetFrameRate = 30;
         saltos_restantes = 1;
+        is_grounded = 0;
+
+        //Estados
+
+        contadorDash = 0;
+        cooldowDash = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Velocidad.y -= 60 *Time.deltaTime; 
-        Velocidad.x = playerInput.actions["Move"].ReadValue<Vector2>().x * 4;
+        Velocidad.y -= 60 *Time.deltaTime;
+        if (contadorDash <= 0)
+        {
+            Velocidad.x = playerInput.actions["Move"].ReadValue<Vector2>().x * 4;
+        }
+        else 
+        {
+            Velocidad.y = 0;
+        }
 
+        cooldowDash -= Time.deltaTime;
+
+        if (playerInput.actions["Sprint"].WasPressedThisFrame())
+        {
+            if(cooldowDash <=0)
+            {
+                contadorDash = 0.25f;
+                if (rotacion.y == 0)
+                {
+                    Velocidad.x = 20;
+                }
+                else
+                {
+                    Velocidad.x = -20;
+                }
+                contadorDash = 0.3f;
+            }
+        }
+
+        cooldowDash -= Time.deltaTime;
+      
         if(Velocidad.x > 0)
         {
             rotacion.y = 0;
@@ -40,6 +81,13 @@ public class Jugador : MonoBehaviour
         }
 
         if(characterController.isGrounded)
+        {
+            is_grounded = 0.15f;
+        }
+
+        is_grounded -= Time.deltaTime;
+
+        if(is_grounded > 0)
         {
             saltos_restantes = 1;
 
@@ -55,7 +103,9 @@ public class Jugador : MonoBehaviour
             Velocidad.y = -1;
             if (playerInput.actions["Jump"].WasPressedThisFrame())
             {
+                Debug.Log("salta");
                 Velocidad.y = 10;
+                is_grounded = 0;
                 animator.Play("jugador_saltar");
             }
         }
@@ -79,7 +129,7 @@ public class Jugador : MonoBehaviour
             {
                 if(saltos_restantes>0)
                 {
-                    animator.Play("jugador_saltar");
+                    animator.Play("jugadpor_dobleSalto");
 
                     Velocidad.y = 10;
                     saltos_restantes--;
@@ -89,5 +139,14 @@ public class Jugador : MonoBehaviour
 
         characterController.Move(Velocidad*Time.deltaTime);
         this.transform.rotation = Quaternion.Euler(rotacion);
+
+        Debug.DrawRay(this.transform.position + Vector3.up * .5f, Vector3.up * .8f, Color.purple);
+
+        RaycastHit hit;
+
+        if(Physics.Raycast(this.transform.position + Vector3.up * .5f, Vector3.up, out hit, .8f))
+        {
+            Velocidad.y = -1;
+        }
     }
 }
