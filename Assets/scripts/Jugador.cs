@@ -53,9 +53,9 @@ public class Jugador : MonoBehaviour
 
         if (playerInput.actions["Sprint"].WasPressedThisFrame())
         {
-            if(cooldowDash <=0)
+            if(contadorDash <=0)
             {
-                contadorDash = 0.25f;
+                contadorDash = 0.2f;
                 if (rotacion.y == 0)
                 {
                     Velocidad.x = 20;
@@ -64,11 +64,11 @@ public class Jugador : MonoBehaviour
                 {
                     Velocidad.x = -20;
                 }
-                contadorDash = 0.3f;
+                cooldowDash = 0.3f;
             }
         }
 
-        cooldowDash -= Time.deltaTime;
+        contadorDash -= Time.deltaTime;
       
         if(Velocidad.x > 0)
         {
