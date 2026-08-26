@@ -16,6 +16,7 @@ public class Jugador : MonoBehaviour
 
     float contadorDash;
     float cooldowDash;
+    float contadorAtaque;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,13 +26,12 @@ public class Jugador : MonoBehaviour
         Velocidad = Vector3.zero;
         rotacion = Vector3.zero;
         animator = this.transform.GetChild(0).GetComponent<Animator>();
-
         //Application.targetFrameRate = 30;
         saltos_restantes = 1;
         is_grounded = 0;
 
         //Estados
-
+        contadorAtaque = 0;
         contadorDash = 0;
         cooldowDash = 0;
     }
@@ -48,27 +48,8 @@ public class Jugador : MonoBehaviour
         {
             Velocidad.y = 0;
         }
-
-        cooldowDash -= Time.deltaTime;
-
-        if (playerInput.actions["Sprint"].WasPressedThisFrame())
-        {
-            if(contadorDash <=0)
-            {
-                contadorDash = 0.2f;
-                if (rotacion.y == 0)
-                {
-                    Velocidad.x = 20;
-                }
-                else
-                {
-                    Velocidad.x = -20;
-                }
-                cooldowDash = 0.3f;
-            }
-        }
-
-        contadorDash -= Time.deltaTime;
+        //------------------------------------------Dash
+        
       
         if(Velocidad.x > 0)
         {
@@ -87,18 +68,22 @@ public class Jugador : MonoBehaviour
 
         is_grounded -= Time.deltaTime;
 
-        if(is_grounded > 0)
+        if (is_grounded > 0)
         {
             saltos_restantes = 1;
 
-            if (Velocidad.x == 0)
+            if (contadorDash <= 0 && contadorAtaque <= 0)
             {
-                animator.Play("jugador_iddle");
+                if (Velocidad.x == 0)
+                {
+                    animator.Play("jugador_iddle");
+                }
+                else
+                {
+                    animator.Play("jugador_caminando");
+                }
             }
-            else
-            {
-                animator.Play("jugador_caminando");
-            }
+
 
             Velocidad.y = -1;
             if (playerInput.actions["Jump"].WasPressedThisFrame())
@@ -115,15 +100,18 @@ public class Jugador : MonoBehaviour
             {
                 Velocidad.y += 40 * Time.deltaTime;
             }
-            
+
+            if (contadorAtaque <= 0)
+        { 
             if (Velocidad.y < -1)
             {
                 animator.Play("jugador_cayendo");
             }
-            else if(Velocidad.y < 0)
+            else if (Velocidad.y < 0)
             {
                 animator.Play("empezar_caida");
             }
+        }
 
             if (playerInput.actions["Jump"].WasPressedThisFrame())
             {
@@ -136,6 +124,39 @@ public class Jugador : MonoBehaviour
                 }
             }
         }
+
+        cooldowDash -= Time.deltaTime;
+
+        if (playerInput.actions["Sprint"].WasPressedThisFrame())
+        {
+            animator.Play("jugador_dash");
+
+            if (cooldowDash <= 0)
+            {
+                contadorDash = 0.2f;
+                if (rotacion.y == 0)
+                {
+                    Velocidad.x = 20;
+                }
+                else
+                {
+                    Velocidad.x = -20;
+                }
+                cooldowDash = 0.3f;
+            }
+        }
+        contadorDash -= Time.deltaTime;
+
+        //------------------------------------------attack
+        if (playerInput.actions["Attack"].WasPressedThisFrame())
+        {
+            if (contadorAtaque <= 0)
+            {
+                animator.Play("jugador_ataque");
+                contadorAtaque = 0.2f;
+            }
+        }
+        contadorAtaque -= Time.deltaTime;
 
         characterController.Move(Velocidad*Time.deltaTime);
         this.transform.rotation = Quaternion.Euler(rotacion);
