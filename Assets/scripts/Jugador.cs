@@ -18,6 +18,10 @@ public class Jugador : MonoBehaviour
     float cooldowDash;
     float contadorAtaque;
 
+    //ataque
+    [SerializeField] GameObject prefabHitboxAtaque;
+    [SerializeField] Transform lugarCreacionHitboxAtaque;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -154,6 +158,7 @@ public class Jugador : MonoBehaviour
             {
                 animator.Play("jugador_ataque");
                 contadorAtaque = 0.2f;
+                Instantiate(prefabHitboxAtaque, lugarCreacionHitboxAtaque.position, Quaternion.identity);
             }
         }
         contadorAtaque -= Time.deltaTime;
@@ -168,6 +173,13 @@ public class Jugador : MonoBehaviour
         if(Physics.Raycast(this.transform.position + Vector3.up * .5f, Vector3.up, out hit, .8f))
         {
             Velocidad.y = -1;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "dano")
+        {
+            Destroy(this.gameObject);
         }
     }
 }
