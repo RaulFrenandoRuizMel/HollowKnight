@@ -543,6 +543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JugadorDestello
   JugadorSpriteRenderer: {fileID: 1713205239}
+  prefabDestello: {fileID: 1332845577833887431, guid: 6d63b53924a59544ba63d4f243b630dd, type: 3}
 --- !u!212 &650605305
 SpriteRenderer:
   serializedVersion: 2
@@ -777,7 +778,7 @@ GameObject:
   - component: {fileID: 888904606}
   m_Layer: 2
   m_Name: Jugador
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -837,8 +838,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08901e3ab07d2f3449df07619e9ee020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jugador
+  tiempoInvulnerable: 0
   prefabHitboxAtaque: {fileID: 5392389946569278284, guid: cdc00d0e7c0554d43b2e5e2d89543a27, type: 3}
   lugarCreacionHitboxAtaque: {fileID: 1577245117}
+  destello: {fileID: 650605304}
 --- !u!114 &888904607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -931,6 +934,7 @@ GameObject:
   - component: {fileID: 1713205240}
   - component: {fileID: 1713205239}
   - component: {fileID: 1713205241}
+  - component: {fileID: 1713205242}
   m_Layer: 2
   m_Name: HollowKnight0002
   m_TagString: Untagged
@@ -1034,6 +1038,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1713205242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713205238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bb419d6d2a87084380c2140dc606b21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TiempoInvencible
 --- !u!1 &2071715290
 GameObject:
   m_ObjectHideFlags: 0

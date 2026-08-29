@@ -10,17 +10,22 @@ public class Jugador : MonoBehaviour
     Vector3 rotacion;
     Animator animator;
     int saltos_restantes;
+    int VIDA;
     float is_grounded;
+
+    public float tiempoInvulnerable;
 
     //Estados
 
     float contadorDash;
     float cooldowDash;
     float contadorAtaque;
+    float retrocesoHitX;
 
     //ataque
     [SerializeField] GameObject prefabHitboxAtaque;
     [SerializeField] Transform lugarCreacionHitboxAtaque;
+    [SerializeField] JugadorDestello destello;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,6 +43,10 @@ public class Jugador : MonoBehaviour
         contadorAtaque = 0;
         contadorDash = 0;
         cooldowDash = 0;
+        VIDA = 3;
+
+        tiempoInvulnerable = 0;
+        retrocesoHitX = 0;
     }
 
     // Update is called once per frame
@@ -46,7 +55,11 @@ public class Jugador : MonoBehaviour
         Velocidad.y -= 60 *Time.deltaTime;
         if (contadorDash <= 0)
         {
-            Velocidad.x = playerInput.actions["Move"].ReadValue<Vector2>().x * 4;
+            if (retrocesoHitX == 0)
+            {
+
+                Velocidad.x = playerInput.actions["Move"].ReadValue<Vector2>().x * 4;
+            }
         }
         else 
         {
@@ -163,6 +176,29 @@ public class Jugador : MonoBehaviour
         }
         contadorAtaque -= Time.deltaTime;
 
+        tiempoInvulnerable -= Time.deltaTime;
+
+        //empujon
+
+        if(retrocesoHitX > 0)
+        {
+            retrocesoHitX -= Time.deltaTime * 10;
+
+            if(retrocesoHitX <0)
+            {
+                retrocesoHitX = 0;
+            }
+        }
+
+        if (retrocesoHitX < 0)
+        {
+            retrocesoHitX += Time.deltaTime * 10;
+
+            if (retrocesoHitX > 0)
+            {
+                retrocesoHitX = 0;
+            }
+        }
         characterController.Move(Velocidad*Time.deltaTime);
         this.transform.rotation = Quaternion.Euler(rotacion);
 
@@ -177,9 +213,34 @@ public class Jugador : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "dano")
+        if (other.gameObject.tag == "dano")
         {
-            Destroy(this.gameObject);
+            if (tiempoInvulnerable  <= 0)
+            {
+                destello.ActivarDestello();
+                VIDA--;
+                tiempoInvulnerable = 1.5f;
+                 //empujon
+                 if(other.gameObject.transform.position.x > this.transform.position.x)
+                {
+                    retrocesoHitX = -5;
+                }
+                 else
+                {
+                    retrocesoHitX = 5;
+
+                }
+                Velocidad.x = retrocesoHitX;
+                Velocidad.y = 10;
+                is_grounded = 0;
+                characterController.Move(Vector3.up * 0.2f);
+
+                if (VIDA <= 0)
+                {
+
+                    Destroy(this.gameObject);
+                }
+            }
         }
     }
 }
