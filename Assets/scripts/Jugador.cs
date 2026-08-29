@@ -183,7 +183,7 @@ public class Jugador : MonoBehaviour
         if(retrocesoHitX > 0)
         {
             retrocesoHitX -= Time.deltaTime * 10;
-
+            rotacion.y = 180;
             if(retrocesoHitX <0)
             {
                 retrocesoHitX = 0;
@@ -193,7 +193,7 @@ public class Jugador : MonoBehaviour
         if (retrocesoHitX < 0)
         {
             retrocesoHitX += Time.deltaTime * 10;
-
+            rotacion.y = 0;
             if (retrocesoHitX > 0)
             {
                 retrocesoHitX = 0;
